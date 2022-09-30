@@ -1,0 +1,78 @@
+//import { getLatLngObj } from "tle.js";
+
+function Position(lat, lon, radius) {
+  var phi = (90 - lat) * (Math.PI / 180);
+  var theta = (lon + 180) * (Math.PI / 180);
+
+  x = (radius * Math.sin(phi) * Math.cos(theta));
+  z = (radius * Math.sin(phi) * Math.sin(theta));
+  y = (radius * Math.cos(phi));
+
+  return [x, y, z];
+
+}
+
+
+const tle = `ISS (ZARYA)
+1 25544U 98067A   17206.18396726  .00001961  00000-0  36771-4 0  9993
+2 25544  51.6400 208.9163 0006317  69.9862  25.2906 15.54225995 67660`;
+
+var wwd = new WorldWind.WorldWindow("globe");
+wwd.addLayer(new WorldWind.BMNGLandsatLayer());
+wwd.addLayer(new WorldWind.AtmosphereLayer());
+wwd.addLayer(new WorldWind.StarFieldLayer());
+wwd.addLayer(new WorldWind.CoordinatesDisplayLayer(wwd));
+
+var renderableLayer = new WorldWind.RenderableLayer();
+wwd.addLayer(renderableLayer);
+
+// Collada
+//NE++
+//SW--
+//
+//
+
+let lat = -13
+let lon = -34
+let rad = 423000
+
+var position = new WorldWind.Position(lat, lon, rad);
+var colladaLoader = new WorldWind.ColladaLoader(position);
+
+var modelAddress = "https://williamsalame.github.io/ISS.dae";
+colladaLoader.load(modelAddress, function(model) {
+
+
+  model.scale = 500;
+  renderableLayer.addRenderable(model);
+  wwd.goTo(new WorldWind.Position(lat, lon, 1000000));
+/*
+  const puppeteer = require('puppeteer');
+
+  async function scrapeProduct(url) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(url);
+
+    let test = await page.$x('//*[@id="isst_lat"]');
+    const src = await el.getProperty('src');
+    //  const srcTxt = await src.jsonValue(); 
+    const srclat = await src.jsonValue();
+
+    //console.log({srcTxt});
+    console.log(test);
+
+    browser.close();
+  }
+  scrapeProduct('http://wsn.spaceflight.esa.int/iss/index_portal.php');
+*/
+
+
+const tle = `ISS (ZARYA)
+1 25544U 98067A   17206.18396726  .00001961  00000-0  36771-4 0  9993
+2 25544  51.6400 208.9163 0006317  69.9862  25.2906 15.54225995 67660`;
+
+const { getLatLngObj } = require("tle.js/dist/tlejs.cjs");
+const optionalTimestampMS = 1502342329860;
+const latLonObj = getLatLngObj(tle, optionalTimestampMS);
+});
